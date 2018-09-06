@@ -1,9 +1,9 @@
 {
     "type": "package",
-    "name": "lovasoa/elm-csv",
+    "name": "zgohr/elm-csv",
     "summary": "A CSV parser.",
     "license": "MIT",
-    "version": "1.1.3",
+    "version": "1.0.0",
     "exposed-modules": [
         "Csv"
     ],
