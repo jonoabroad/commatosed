@@ -7,7 +7,7 @@ A CSV parser for [Elm][elm-lang].
 ## Installation
 
 ```
-elm-package install zgohr/elm-csv
+elm install zgohr/elm-csv
 ```
 
 ## Usage

@@ -7,5 +7,3 @@ bundle.*
 *.log
 tests/.gitignore
 tests/VerifyExamples/
-tests/*elm
-tests/elm-package.json
