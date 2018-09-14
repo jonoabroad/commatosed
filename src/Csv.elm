@@ -1,6 +1,6 @@
 module Csv exposing
     ( Csv
-    , parseWith, parse, split, splitWith
+    , parseWith, parse
     )
 
 {-| A CSV parser that supports different separators, and quoted fields.
@@ -14,7 +14,7 @@ The results are provided as lists.
 
 ## Parsing functions
 
-@docs parseWith, parse, split, splitWith
+@docs parseWith, parse
 
 -}
 
@@ -36,17 +36,15 @@ parse : String -> Csv
 parse = parseWith ','
 
 
-
 parseWith : Char -> String -> Csv
 parseWith separator raw =
     let
         y      = Debug.log "raw"  raw
-        values = Debug.log "values " (splitWith separator raw)
+        values = List.reverse (splitWith separator raw)
         headers =
             List.head values
                 |> Maybe.withDefault []
-
-        records = Debug.log "records" (List.drop 1 values)
+        records = List.drop 1 values
     in
     { headers = headers
     , records = records
@@ -54,29 +52,33 @@ parseWith separator raw =
 
 
 
-split : String -> List (List String)
-split = splitWith ','
-
-
 splitWith : Char -> String -> List (List String)
 splitWith separator raw =
   let
-    state    = String.foldr accumulator (start separator) raw
+    state    = Debug.log "splitWith" (String.foldl accumulator (start separator) raw)
     ss       = handleSeparator state 
-    nContent = foldr (::) ss.content ss.cRow 
+    sRow     = Maybe.map List.reverse ss.cRow 
+    nContent = foldr (::) ss.content sRow 
   in
     nContent
         
+foldr : (a -> b -> b) -> b -> Maybe a -> b
+foldr fn acc m = 
+  let
+    r = Maybe.map (\a -> fn a acc) m
+  in 
+    Maybe.withDefault acc r  
 
 
+-- ideally cValue and previousChar would live in the same Maybe, but for the moment I can't get my head 
+-- around it.
 type alias State =
   { separator          : Char 
   , cValue             : Maybe String
   , cRow               : Maybe (List String)
   , content            : List  (List String)
   , inQuote            : Bool  
-  , previousWasNewLine : Bool
-  , previousWasEscape  : Bool 
+  , previousChar       : Maybe Char   
   }
 
 start s = { separator = s
@@ -84,40 +86,75 @@ start s = { separator = s
         , cRow   = Nothing
         , content = []
         , inQuote = False
-        , previousWasNewLine = False 
-        , previousWasEscape  = False }
+        , previousChar = Nothing}
  
+
 accumulator :  Char -> State -> State
 accumulator current state =
-  let
-    _ = 1 
-  in
-    case current  of 
-      '\\' -> {state | previousWasEscape = True} 
-      '"'  -> handleQuote current state 
-      '\r' -> handleNewLine current state
-      '\n' -> handleNewLine current state 
-      _    -> handleCharacter current state 
-
+  let 
+    newState = case (Debug.log "current " current)  of  
+      '"'  -> handleQuote '\"' state        
+      '\r'  -> handleNewLine current state
+      '\n'  -> handleNewLine current state 
+      _     -> handleCharacter current state 
+  in 
+    {newState | previousChar = Just current}
 
 
 handleQuote : Char -> State -> State 
 handleQuote char state = 
-  let
-    y = Debug.log "char " char 
-    x = Debug.log "input state " state  
-  in 
-  case state.previousWasEscape of 
-    True  -> 
-      let 
-        nV =  case state.cValue of 
-          Nothing  -> Just  (String.fromChar  char)
-          Just cV  -> Just (cV ++ (String.fromChar char))
-      in    
-        {state | cValue = nV, previousWasNewLine = False }
-    False -> 
-      {state | inQuote = not state.inQuote, previousWasNewLine = False }  
+  case (state.inQuote) of 
+    (True) -> 
+      case state.previousChar of 
+        Nothing -> Debug.log "handleQuote.Nothing" {state | inQuote = False} -- No idea how we could get here.  
+        Just ch ->
+          case ch of 
+            '"' ->
+              let 
+                nV =  Maybe.map  (\ v -> v ++ "\"")  state.cValue
+              in   
+                {state | cValue = nV,  inQuote = False}
+            '\\' ->
+              let 
+                nV =  Maybe.map  (\ v -> v ++ "\"")  state.cValue
+              in   
+                {state | cValue = nV,  inQuote = False}
+            _ ->
+              {state | inQuote = False}
+
+
+    (False) -> 
+      case state.previousChar of 
+        Nothing -> {state | inQuote = True}  
+        Just prev -> 
+          case (prev,char) of 
+            ('"','"')   ->
+             Debug.log ("quote quote " ++ (Debug.toString state.cValue) ) (escapedQuote state)
+            ('\\'  ,'"') -> 
+              Debug.log ("slash quote " ++ (Debug.toString state.cValue) ) (escapedQuote state)
+            _           ->
+              let 
+                sc = String.fromChar char
+                nV =  case state.cValue of 
+                  Nothing  -> Just sc
+                  Just cV  -> Just (cV ++ sc)
+                xx = Debug.log ""
+              in    
+                {state | inQuote = True}
+
    
+
+escapedQuote : State -> State 
+escapedQuote state = 
+  case state.cValue of 
+    Nothing -> Debug.log "We got a place we shouldn't have " state  -- how did we get here 
+    Just cv ->
+      let
+        x      = Debug.log "this is cv" cv
+        trimmed =  Debug.log "this is trimmer" (String.slice 0 -1 cv)
+        ncVale  = trimmed ++ "\""
+      in 
+        {state | cValue = (Just ncVale)}
 
 
 handleNewLine : Char -> State -> State 
@@ -130,28 +167,33 @@ handleNewLine char s =
         -- nothing to update 
         (Nothing, Nothing ) -> s.content
         -- we have content, and no row 
-        (Just c , Nothing ) -> [String.reverse c] :: s.content
+        (Just c , Nothing ) -> [c] :: s.content
         -- we have a row but no conent 
-        (Nothing, Just r  ) -> r :: s.content
+        (Nothing, Just r  ) -> List.reverse(r) :: s.content
         -- both content and a row 
         (Just c,  Just r  ) ->  
           let 
-            rC   = String.reverse c
-            nRow = rC :: r 
+            nRow = List.reverse(c :: r ) 
           in 
             nRow :: s.content
     in
-    {s | content = nContent, cValue = Nothing, cRow = Nothing, previousWasNewLine = True }  
+    {s | content = nContent, cValue = Nothing, cRow = Nothing}  
 
 
 handleSeparator : State -> State 
 handleSeparator s = 
   let 
-    cRow = Maybe.withDefault [] s.cRow
-    fRow v r = (String.reverse v) :: r
-    nRow = foldr fRow cRow  s.cValue  
+    fRow : Maybe String -> Maybe (List String) -> Maybe (List String)
+    fRow mv mr =
+      case (mv,mr) of 
+        (Nothing, Nothing ) -> Nothing
+        (Just v , Nothing ) -> Just [v] 
+        (Nothing, Just r  ) -> Just  r
+        (Just v,  Just r  ) ->  Just (v :: r)
+    nRow : Maybe (List String)
+    nRow = fRow s.cValue s.cRow  
   in
-    {s | cValue = Nothing, cRow = Just nRow, previousWasNewLine = False }     
+    {s | cValue = Nothing, cRow = nRow}     
 
 
 handleCharacter : Char -> State -> State 
@@ -170,12 +212,6 @@ appendCharacter c s =
       Nothing  -> Just char
       Just cV  -> Just (cV ++ char)
   in    
-    {s | cValue = update, previousWasNewLine = False }      
+    {s | cValue = update}      
 
 
-foldr : (a -> b -> b) -> b -> Maybe a -> b
-foldr fn acc m = 
-  let
-    r = Maybe.map (\a -> fn a acc) m
-  in 
-    Maybe.withDefault acc r  
