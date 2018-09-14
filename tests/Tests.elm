@@ -10,7 +10,7 @@ suite =
     describe "The CSV module"
         [ describe "CSV.parse"
             [ 
-              test "Convert a string of comma-separated values into a `Csv` structure." <|
+              skip <| test "Convert a string of comma-separated values into a `Csv` structure." <|
                 \_ ->
                     let
                          output = Csv.parse "id,value\n51,one\n50,two\n"
@@ -23,7 +23,7 @@ suite =
                            }
                     in
                         Expect.equal output expect
-            , test "correctly parses quotes in values " <|
+            , test "Parses quotes in values " <|
                 \_ ->
                     let
                          output = Csv.parse "value\nHere is a quote:\"\"\nAnother one:\\\"\n"
@@ -36,19 +36,20 @@ suite =
                           }
                     in
                         Expect.equal output expect
-            , test "Values that contain the character ',' can be quoted " <|
+            , test "correctly parses quotes in values " <|
                 \_ ->
                     let
-                         output = Csv.parse "id,value\n\"1,2,3\",\"one,two,three\"\n"
-                         expect = {
-                           headers = ["id", "value"],
-                           records = [
-                                         ["1,2,3", "one,two,three"]
-                                     ]
+                         output = Csv.parse "value\n,Here is a quote:\"\"\nAnother one:\\\"\n"
+                         expect = 
+                          {
+                            headers = ["value"],
+                            records = [
+                              ["Here is a quote:\""],
+                              ["Another one:\""]
+                            ]
                           }
                     in
-                        Expect.equal output expect
-
+                        Expect.equal output expect                        
             , test "Double quotes can be escaped with a backslash or a second quote" <|
                 \_ ->
                     let
@@ -62,25 +63,37 @@ suite =
                           }
                     in
                         Expect.equal output expect
-
-
-
-
-
-    
-
-
-
-
-
-
-    
-
-
+            , skip <| test "Values that contain the character ',' can be quoted " <|
+                \_ ->
+                    let
+                         output = Csv.parse "id,value\n\"1,2,3\",\"one,two,three\"\n"
+                         expect = {
+                           headers = ["id", "value"],
+                           records = [
+                                         ["1,2,3", "one,two,three"]
+                                     ]
+                          }
+                    in
+                        Expect.equal output expect
+ 
+            , skip <| test "Values within quotes can contain new lines " <|
+                \_ ->
+                    let
+                         output = Csv.parse """"value\n,"Here is a multiline \nvalue",\nsingle line value"""
+                         expect =  
+                          {
+                            headers = ["value"],
+                            records = [
+                                        ["Here is a multiline \nvalue"],
+                                        ["single line value"]
+                                      ]
+                          }
+                    in
+                        Expect.equal output expect
             ],
             describe "CSV.parseWith"
             [ 
-              test "Convert a string of values separated by a _separator_ into a `Csv` structure." <|
+              skip <| test "Convert a string of values separated by a _separator_ into a `Csv` structure." <|
                 \_ ->
                     let
                          output = Csv.parseWith ';' "id;value\n1;one\n2;two\n"
@@ -94,23 +107,10 @@ suite =
                           } 
                     in
                         Expect.equal output expect
-            , test "correctly parses quotes in values " <|
-                \_ ->
-                    let
-                         output = Csv.parse "value\nHere is a quote:\"\"\nAnother one:\\\"\n"
-                         expect = {
-                            headers = ["value"],
-                            records = [
-                               ["Here is a quote:\"\""],
-                               ["Another one:\\\""]
-                              ]
-                          }
-                    in
-                        Expect.equal output expect
             ],
             describe "CSV.split"
             [ 
-              test "Convert a string of comma-separated values into a list of lists." <|
+               skip <| test "Convert a string of comma-separated values into a list of lists." <|
                 \_ ->
                     let
                          output = Csv.split  "id,value\n1,one\n2,two\n"
@@ -123,7 +123,7 @@ suite =
             ],
             describe "CSV.splitWith"
             [ 
-              test "Convert a string of values separated by a _separator_ into a `Csv` structure." <|
+              skip <| test "Convert a string of values separated by a _separator_ into a `Csv` structure." <|
                 \_ ->
                     let
                          output = Csv.splitWith ';' "id;value\n1;one\n2;two"
