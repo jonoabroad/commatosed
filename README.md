@@ -9,7 +9,7 @@ It allows quoted and multiline values.
 ## Installation
 
 ```
-elm install jonaobroad/elmish-csv
+elm install jonaobroad/commatosed
 ```
 
 ## Usage
@@ -27,9 +27,9 @@ This library builds on the following libraries :
 
 [MIT][license-url]
 
-[travis-img]: https://img.shields.io/travis/jonoabroad/elmish-csv.svg?style=flat-square
-[travis-url]: https://travis-ci.org/jonoabroad/elmish-csv
-[docs-url]: http://package.elm-lang.org/packages/jonoabroad/elmish-csv/latest/Csv
-[license-url]: https://github.com/jonoabroad/elmish-csv/blob/master/LICENSE
+[travis-img]: https://img.shields.io/travis/jonoabroad/commatosed.svg?style=flat-square
+[travis-url]: https://travis-ci.org/jonoabroad/commatosed
+[docs-url]: http://package.elm-lang.org/packages/jonoabroad/commatosed/latest/Csv
+[license-url]: https://github.com/jonoabroad/commatosed/blob/master/LICENSE
 [elm-lang]: http://elm-lang.org/
 [rfc-4180]: http://www.rfc-base.org/txt/rfc-4180.txt
