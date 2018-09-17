@@ -12,4 +12,6 @@ cache:
     - node_modules
 
 script:
+  - elm --version
+  - elm-test -- version
   - elm-test
