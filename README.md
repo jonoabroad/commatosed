@@ -1,25 +1,35 @@
-# elm-csv
+# elmish-csv
 
 [![Build status][travis-img]][travis-url]
 
-A CSV parser for [Elm][elm-lang].
+A CSV parser for [Elm][elm-lang] based on [RFC 4180][rfc-4180].
+
+It allows quoted and multiline values.
 
 ## Installation
 
 ```
-elm install zgohr/elm-csv
+elm install jonaobroad/elmish-csv
 ```
 
 ## Usage
 
 For usage, see the [documentation][docs-url].
 
+## History  
+
+This library builds on the following libraries :
+  * https://github.com/zgohr/elm-csv, 
+  * https://github.com/lovasoa/elm-csv,  
+  * https://github.com/gummesson/elm-csv
+
 ## License
 
 [MIT][license-url]
 
-[travis-img]: https://img.shields.io/travis/zgohr/elm-csv.svg?style=flat-square
-[travis-url]: https://travis-ci.org/zgohr/elm-csv
-[docs-url]: http://package.elm-lang.org/packages/zgohr/elm-csv/latest/Csv
-[license-url]: https://github.com/zgohr/elm-csv/blob/master/LICENSE
+[travis-img]: https://img.shields.io/travis/jonoabroad/elmish-csv.svg?style=flat-square
+[travis-url]: https://travis-ci.org/jonoabroad/elmish-csv
+[docs-url]: http://package.elm-lang.org/packages/jonoabroad/elmish-csv/latest/Csv
+[license-url]: https://github.com/jonoabroad/elmish-csv/blob/master/LICENSE
 [elm-lang]: http://elm-lang.org/
+[rfc-4180]: http://www.rfc-base.org/txt/rfc-4180.txt

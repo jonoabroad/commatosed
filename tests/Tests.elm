@@ -49,11 +49,10 @@ suite =
                           }
                     in
                         Expect.equal output expect                      
-            -- this one ^^^^ AND vvvvv
-            ,  test "Double quotes can be escaped with a backslash or a second quote" <|
+            , test "Double quotes can be escaped with a backslash or a second quote" <|
                 \_ ->
                     let
-                         output = Csv.parse "value\n,Here is a quote:\"\"\nAnother one:\\\""
+                         output = Csv.parse "value\nHere is a quote:\"\"\nAnother one:\\\""
                          expect = {
                            headers = ["value"],
                            records = [
@@ -79,7 +78,7 @@ suite =
             , test "Values within quotes can contain new lines " <|
                 \_ ->
                     let
-                         output = Csv.parse """value\n,"Here is a multiline \nvalue",\nsingle line value"""
+                         output = Csv.parse """value\n"Here is a multiline \nvalue"\nsingle line value"""
                          expect =  
                           {
                             headers = ["value"],
@@ -87,6 +86,90 @@ suite =
                                         ["Here is a multiline \nvalue"],
                                         ["single line value"]
                                       ]
+                          }
+                    in
+                        Expect.equal output expect
+            , test "Values within quotes can contain new lines, again " <|
+                \_ ->
+                    let
+                         output = Csv.parse "value\n\"Here is a multiline \nvalue - 1,2,3\"\nsingle line value"
+                         expect =  
+                          {
+                            headers = ["value"],
+                            records = [
+                                        ["Here is a multiline \nvalue - 1,2,3"],
+                                        ["single line value"]
+                                      ]
+                          }
+                    in
+                        Expect.equal output expect
+            , test "Can handle whitespace " <|
+                \_ ->
+                    let
+                         output = Csv.parse "h1,h2,h3\nfull, ,\t\n,full,\n,,full\n"
+                         expect =  
+                          {
+                            headers = ["h1","h2","h3"],
+                            records = [
+                                        ["full"," ","\t"],
+                                        ["","full",""],
+                                        ["","","full"]
+                                      ]
+                          }
+                    in
+                        Expect.equal output expect
+            , test "Can handle empty values " <|
+                \_ ->
+                    let
+                         output = Csv.parse "\n\n\n"
+                         expect =  
+                          {
+                            headers = [],
+                            records = []
+                          }
+                    in
+                        Expect.equal output expect
+            ,  test "minimum viable csv " <|
+                \_ ->
+                    let
+                         output = Csv.parse ",\n,\n,"
+                         expect =  
+                          {
+                            headers = ["",""],
+                            records = [["",""],["",""]]
+                          }
+                    in
+                        Expect.equal output expect
+            , test "minimum viable csv, trailing \n" <|
+                \_ ->
+                    let
+                         output = Csv.parse ",\n,\n,\n"
+                         expect =  
+                          {
+                            headers = ["",""],
+                            records = [["",""],["",""]]
+                          }
+                    in
+                        Expect.equal output expect
+            , test "empty string" <|
+                \_ ->
+                    let
+                         output = Csv.parse ""
+                         expect =  
+                          {
+                            headers = [],
+                            records = []
+                          }
+                    in
+                        Expect.equal output expect
+            , test "header only" <|
+                \_ ->
+                    let
+                         output = Csv.parse "Header"
+                         expect =  
+                          {
+                            headers = ["Header"],
+                            records = []
                           }
                     in
                         Expect.equal output expect
