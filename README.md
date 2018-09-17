@@ -23,6 +23,8 @@ This library builds on the following libraries :
   * https://github.com/lovasoa/elm-csv,  
   * https://github.com/gummesson/elm-csv
 
+Thank you to [Ken][ken-twitter] for the name.
+
 ## License
 
 [MIT][license-url]
@@ -33,3 +35,4 @@ This library builds on the following libraries :
 [license-url]: https://github.com/jonoabroad/commatosed/blob/master/LICENSE
 [elm-lang]: http://elm-lang.org/
 [rfc-4180]: http://www.rfc-base.org/txt/rfc-4180.txt
+[ken-twitter]: https://twitter.com/kpfaulkner

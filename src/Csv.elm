@@ -27,11 +27,38 @@ type alias Csv =
     }
 
 
+{-| 
+
+Parse the input string into a CSV Structure 
+
+    parse "value\n\"Here is a multiline \nvalue - 1,2,3\"\nsingle line value"  =
+
+        { headers = [ "value" ]
+        , records =
+            [ [ "Here is a multiline \nvalue - 1,2,3" ]
+            , [ "single line value" ]
+            ]
+        }
+-}
 parse : String -> Csv
 parse =
     parseWith ','
 
 
+{-| 
+
+Parse the input string into a CSV Structure using a custom delimiter 
+
+    parseWith '☃' "id☃value\n1☃one\n2☃two" =
+                        
+        { headers = [ "id", "value" ]
+        , records =
+            [ [ "1", "one" ]
+            , [ "2", "two" ]
+            ]
+        }
+
+-}
 parseWith : Char -> String -> Csv
 parseWith separator raw =
     let
