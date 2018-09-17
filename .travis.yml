@@ -1,9 +1,12 @@
 sudo: false
 language: node_js
 node_js:
-  - "node"
+  - 8
+
 before_install:
-  - npm install -g elm-test@0.19.0-beta9
+  - npm install npm@latest   
+  - npm install elm@latest
+  - npm install elm-test@beta
 
 cache:
   directories:
@@ -11,4 +14,4 @@ cache:
     - node_modules
 
 script:
-  - elm-test
+  - npm test

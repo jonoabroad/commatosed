@@ -1,0 +1,15 @@
+{
+  "name": "commatosed",
+  "version": "1.0.0",
+  "description": "csv parser for elm",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/elm-test"
+  },
+  "devDependencies": {
+    "elm": "latest",
+    "elm-test": "beta"
+  }
+}
