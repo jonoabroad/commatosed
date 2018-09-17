@@ -1,6 +1,6 @@
 {
     "type": "package",
-    "name": "jonoabroad/elmish-csv",
+    "name": "jonoabroad/commatosed",
     "summary": "A CSV parser based on RFC-4180",
     "license": "MIT",
     "version": "1.0.0",
