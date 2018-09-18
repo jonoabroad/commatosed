@@ -14,4 +14,4 @@ cache:
     - node_modules
 
 script:
-  - npm test
+  - travis_wait npm --verbose test
