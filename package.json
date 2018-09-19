@@ -6,7 +6,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "./node_modules/.bin/elm-test"
+    "test": "sysconfcpus --num 1 elm-test"
   },
   "devDependencies": {
     "elm": "latest",
