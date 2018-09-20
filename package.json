@@ -6,7 +6,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "$TRAVIS_BUILD_DIR/sysconfcpus --num 1 elm-test"
+    "test": "$TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus --num 1 elm-test"
   },
   "devDependencies": {
     "elm": "latest",
